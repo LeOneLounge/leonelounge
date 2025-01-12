@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu du Restaurant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+        header img {
+            max-width: 150px;
+        }
+        main {
+            flex-grow: 1;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .menu-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            margin-top: 20px;
+            display: inline-block;
+        }
+        .menu-button:hover {
+            background-color: #0056b3;
+        }
+        .menu-container {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+        .menu-category h2 {
+            margin-top: 20px;
+        }
+        .menu-subcategory h3 {
+            margin-top: 10px;
+            color: #007bff;
+        }
+        .menu-item {
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            width: 200px;
+            text-align: center;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .menu-item img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+        .menu-item h3 {
+            margin: 10px 0 5px;
+        }
+        .menu-item p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+        }
+        footer a {
+            margin: 0 10px;
+            color: #fff;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img id="logo" src="" alt="Logo du restaurant">
+    </header>
+    <main>
+        <h1>Bienvenue au Restaurant</h1>
+        <p>Découvrez notre menu en cliquant sur le bouton ci-dessous.</p>
+        <button class="menu-button" id="menuButton">Voir le Menu</button>
+    </main>
+    <div class="menu-container" id="menuContainer">
+        <h1>Menu du Restaurant</h1>
+        <div class="menu" id="menuItems"></div>
+    </div>
+    <footer>
+        <a href="#" id="facebookLink" target="_blank">Facebook</a>
+        <a href="#" id="instagramLink" target="_blank">Instagram</a>
+        <p id="wifiInfo"></p>
+    </footer>
+
+    <script>
+        const menuButton = document.getElementById('menuButton');
+        const menuContainer = document.getElementById('menuContainer');
+        const menuItems = document.getElementById('menuItems');
+        const logo = document.getElementById('logo');
+        const facebookLink = document.getElementById('facebookLink');
+        const instagramLink = document.getElementById('instagramLink');
+        const wifiInfo = document.getElementById('wifiInfo');
+
+        // Charger les paramètres depuis localStorage
+        const loadSettings = () => {
+            const logoUrl = localStorage.getItem('logoUrl');
+            const facebook = localStorage.getItem('facebookLink');
+            const instagram = localStorage.getItem('instagramLink');
+            const wifiPassword = localStorage.getItem('wifiPassword');
+            
+            if (logoUrl) {
+                logo.src = logoUrl;
+            }
+            if (facebook) {
+                facebookLink.href = facebook;
+                facebookLink.style.display = 'inline';
+            }
+            if (instagram) {
+                instagramLink.href = instagram;
+                instagramLink.style.display = 'inline';
+            }
+            if (wifiPassword) {
+                wifiInfo.textContent = `Mot de passe Wi-Fi : ${wifiPassword}`;
+            }
+        };
+
+        // Charger les éléments du menu depuis localStorage
+        const loadMenuItems = () => {
+            const items = JSON.parse(localStorage.getItem('menuItems')) || [];
+            menuItems.innerHTML = '';
+
+            items.forEach(item => {
+                const menuItemDiv = document.createElement('div');
+                menuItemDiv.classList.add('menu-item');
+
+                const img = document.createElement('img');
+                img.src = item.image || 'https://via.placeholder.com/150';
+                img.alt = item.name;
+
+                const name = document.createElement('h3');
+                name.textContent = item.name;
+
+                const price = document.createElement('p');
+                price.textContent = `Prix : ${item.price} €`;
+
+                const quantity = document.createElement('p');
+                quantity.textContent = `Quantité : ${item.quantity}`;
+
+                menuItemDiv.appendChild(img);
+                menuItemDiv.appendChild(name);
+                menuItemDiv.appendChild(price);
+                menuItemDiv.appendChild(quantity);
+
+                menuItems.appendChild(menuItemDiv);
+            });
+        };
+
+        // Afficher le menu
+        menuButton.addEventListener('click', () => {
+            loadMenuItems();
+            menuContainer.style.display = 'block';
+        });
+
+        // Masquer le menu si l'utilisateur clique en dehors du conteneur
+        window.addEventListener('click', (event) => {
+            if (!menuContainer.contains(event.target) && event.target !== menuButton) {
+                menuContainer.style.display = 'none';
+            }
+        });
+
+        loadSettings(); // Charger les paramètres
+    </script>
+</body>
+</html>
